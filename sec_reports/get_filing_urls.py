@@ -1,20 +1,14 @@
-from sec_api import QueryApi
+import os
 
-queryApi = QueryApi(
-    api_key="d1cceb7c0f4c36080e90bca6c0970aac477952759486bc5f8988c8353d8db872"
-)
+from sec_api import QueryApi
+from dotenv import load_dotenv
+
+load_dotenv()
+queryApi = QueryApi(api_key=os.getenv("SEC_API_KEY"))
 
 nasdaq_tickers = [
     "AAPL",
-    "MSFT",
-    "AMZN",
-    "GOOGL",
-    "FB",
-    "TSLA",
-    "NVDA",
-    "PYPL",
-    "ADBE",
-    "CMCSA",
+    "MSFT"
 ]
 
 base_query = {
@@ -36,13 +30,11 @@ for ticker in nasdaq_tickers:
     print("Starting download for ticker {ticker}".format(ticker=ticker))
 
     # 2020년부터 2023년까지의 10-K 보고서 다운로드
-    for year in range(2024, 2020, -1):
+    for year in range(2023, 2022, -1):
         for month in range(1, 13, 1):
             universe_query = (
-                'formType:("10-K") AND '
-                + "filedAt:[{year}-{month:02d}-01 TO {year}-{month:02d}-31]".format(
-                    year=year, month=month
-                )
+                    'formType:("10-K") AND '
+                    + "filedAt:[{year}-{month:02d}-01 TO {year}-{month:02d}-31]".format(year=year, month=month)
             )
 
             # 쿼리에 티커 추가
