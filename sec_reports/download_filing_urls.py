@@ -1,10 +1,11 @@
 import os
 import multiprocessing
 from sec_api import RenderApi
+from dotenv import load_dotenv
 
-renderApi = RenderApi(
-    api_key="d1cceb7c0f4c36080e90bca6c0970aac477952759486bc5f8988c8353d8db872"
-)
+load_dotenv()
+
+renderApi = RenderApi(os.getenv("SEC_API_KEY"))
 
 
 # download filing and save to "filings" folder
@@ -38,7 +39,7 @@ def download_all_filings():
 
     # uncomment next line to process all URLs
     # urls = load_urls()
-    urls = load_urls()[1:40]
+    urls = load_urls()[1:10]
     print("{length} filing URLs loaded".format(length=len(urls)))
 
     number_of_processes = 20
