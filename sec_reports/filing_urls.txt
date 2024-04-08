@@ -1,8 +1,0 @@
-https://www.sec.gov/Archives/edgar/data/320193/000032019322000108/aapl-20220924.htm
-https://www.sec.gov/Archives/edgar/data/320193/000032019321000105/aapl-20210925.htm
-https://www.sec.gov/Archives/edgar/data/789019/000156459022026876/msft-10k_20220630.htm
-https://www.sec.gov/Archives/edgar/data/789019/000156459021039151/msft-10k_20210630.htm
-https://www.sec.gov/Archives/edgar/data/1018724/000101872422000005/amzn-20211231.htm
-https://www.sec.gov/Archives/edgar/data/1018724/000101872421000004/amzn-20201231.htm
-https://www.sec.gov/Archives/edgar/data/1652044/000165204421000010/goog-20201231.htmhttps://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm
-https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm
