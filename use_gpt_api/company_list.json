@@ -1,0 +1,30 @@
+
+{
+    "company_AAPL": [
+        "애플",
+        "AAPL",
+        "APPLE",
+        "Apple",
+        "apple",
+        "appl",
+        "320193"
+    ],
+    "company_MSFT": [
+        "마이크로소프트",
+        "MSFT",
+        "MICROSOFT",
+        "Microsoft",
+        "microsoft",
+        "msft",
+        "789019"
+    ],
+    "company_AMZN": [
+        "아마존",
+        "AMZN",
+        "AMAZON",
+        "Amazon",
+        "amazon",
+        "amzn",
+        "1018724"
+    ]
+}
