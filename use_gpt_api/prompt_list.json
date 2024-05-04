@@ -1,0 +1,5 @@
+{
+    "prompt" : [
+        "in this disclosure data, summarize the main products and services in one or two lines, and if there is a new product, please explain it in one or two lines, like this format. products and service: ... \n new product:... {prompt_data}",
+        "In this disclosure data, tell me about main products {prompt_data}"]
+}
