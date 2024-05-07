@@ -2,3 +2,4 @@ env
 edgar-crawler-main
 __pycache__
 abcdefghijklmn
+.DS_Store
