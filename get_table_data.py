@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-import edgarFunctions as edgar
+import edgar_functions as edgar
 from bs4 import BeautifulSoup
 # from headers import headers
 import collections
