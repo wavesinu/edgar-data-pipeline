@@ -18,19 +18,20 @@ file_list = os.listdir(dir_path)
 with open('gpt_prompt.json', "r") as file:
     prompt_json = json.load(file)
 
+
 # 데이터 추출
 
 
 def extract_data():
     for file in file_list:
-        if (file == ".DS_Store"):
+        if file == ".DS_Store":
             print(file)
         else:
             index = file.rfind('_')
             index2 = file.rfind('/')
 
-            year = int(file[index-4:index])
-            cik = int(file[index2+1:index-9])
+            year = int(file[index - 4:index])
+            cik = int(file[index2 + 1:index - 9])
 
             query = f"select year from table1 where company_cik={cik}"
             check = database.readDB(query)
@@ -48,25 +49,25 @@ def extract_data():
                 print(
                     f'{cik}, {year}, item1의 토큰 개수: {item1[1]}, item7의 토큰 개수: {item7[1]}, item8의 토큰 개수: {item8[1]}')
 
-                if (item1[1] > 13000):
-                    if (item7[1] > 13000):
-                        if (item8[1] > 13000):
+                if item1[1] > 13000:
+                    if item7[1] > 13000:
+                        if item8[1] > 13000:
                             print("토큰 초과: 1, 7, 8\n")
                         else:
                             print("토큰 초과: 1, 7\n")
                     else:
-                        if (item8[1] > 13000):
+                        if item8[1] > 13000:
                             print("토큰 초과: 1, 8\n")
                         else:
                             print("토큰 초과: 1\n")
                 else:
-                    if (item7[1] > 13000):
-                        if (item8[1] > 13000):
+                    if item7[1] > 13000:
+                        if item8[1] > 13000:
                             print("토큰 초과: 7, 8\n")
                         else:
                             print("토큰 초과: 7\n")
                     else:
-                        if (item8[1] > 13000):
+                        if item8[1] > 13000:
                             print("토큰 초과: 8\n")
                         else:
                             get_re(cik, year, item1, item7, item8)
@@ -76,9 +77,11 @@ def get_re(cik, year, item1, item7, item8):
     product_service_new = gpt.gpt_query_1(
         content=prompt_json['product_service_new']['system'], item=item1[0])
     revenue_productNregion = gpt.gpt_query_7(
-        content7=prompt_json["revenue_productNregion_7"]["system"], content8=prompt_json["revenue_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
+        content7=prompt_json["revenue_productNregion_7"]["system"],
+        content8=prompt_json["revenue_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
     netsales_productNregion = gpt.gpt_query_7(
-        content7=prompt_json["netsales_productNregion_7"]["system"], content8=prompt_json["netsales_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
+        content7=prompt_json["netsales_productNregion_7"]["system"],
+        content8=prompt_json["netsales_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
     p1 = product_service_new.replace("'", "''")
     p2 = revenue_productNregion.replace("'", "''")
     p3 = netsales_productNregion.replace("'", "''")
