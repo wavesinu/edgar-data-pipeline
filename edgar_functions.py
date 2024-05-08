@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -19,6 +20,7 @@ headers = {
     "User-Agent": "Mozilla"
 }
 
+
 # matching ticker =========================================================
 def cik_matching_ticker(ticker, headers=headers):
     ticker = ticker.upper().replace(".", "-")
@@ -32,14 +34,16 @@ def cik_matching_ticker(ticker, headers=headers):
             return cik
     raise ValueError(f"Ticker {ticker} not found in SEC database")
 
+
 # =========================================================
 def get_submission_data_for_ticker(ticker, headers=headers, only_filings_df=False):
-    cik = cik_matching_ticker(ticker, headers = headers)
+    cik = cik_matching_ticker(ticker, headers=headers)
     url = f"https://data.sec.gov/submissions/CIK{cik}.json"
     company_json = requests.get(url, headers=headers).json()
     if only_filings_df:
         return pd.DataFrame(company_json['filings']['recent'])
     return company_json
+
 
 # get accession number 10years =========================================================
 def get_filtered_filings(ticker, ten_k=True, just_accession_numbers=False, headers=headers):
@@ -55,21 +59,23 @@ def get_filtered_filings(ticker, ten_k=True, just_accession_numbers=False, heade
     else:
         return df
 
+
 # get latest accession number =========================================================
 def get_latest_accession_number(ticker, ten_k=True, headers=headers):
     # only_filings_df=True로 설정하여 DataFrame으로만 제출 데이터를 가져옵니다.
     filings_df = get_filtered_filings(ticker, ten_k=ten_k, just_accession_numbers=True, headers=headers)
-    
+
     # 가장 최신 날짜의 제출물을 가져오기 위해 인덱스(날짜)를 기준으로 내림차순 정렬 후 첫 번째 항목을 선택합니다.
     latest_accession_number = filings_df.sort_index(ascending=False).iloc[0]
-    
+
     return latest_accession_number
+
 
 # # get filing summary =========================================================
 def get_filing_summary(cik, accession_number, headers):
     # Accession number에서 하이픈('-') 제거
     accession_number_formatted = accession_number.replace('-', '')
-    
+
     # SEC EDGAR에서 문서 URL 생성
     base_url = "https://www.sec.gov/Archives/edgar/data"
     url = f"{base_url}/{cik}/{accession_number_formatted}/FilingSummary.xml"
@@ -80,13 +86,13 @@ def get_filing_summary(cik, accession_number, headers):
     if response.status_code == 200:
         # 응답에서 XML 데이터를 가져옴
         xml_data = response.content
-        
+
         # ElementTree를 사용하여 XML 데이터 파싱
         tree = ET.ElementTree(ET.fromstring(xml_data))
-        
+
         # # 루트 요소에 접근
         # root = tree.getroot()
-        
+
         segment_count = tree.find('.//SegmentCount').text
         print(f"Segment Count: {segment_count}\n")
         # 'Reports' 섹션 내의 'Report' 태그들을 순회
@@ -94,24 +100,25 @@ def get_filing_summary(cik, accession_number, headers):
             html_file_name = report.find('HtmlFileName').text if report.find('HtmlFileName') is not None else 'N/A'
             long_name = report.find('LongName').text if report.find('LongName') is not None else 'N/A'
             short_name = report.find('ShortName').text if report.find('ShortName') is not None else 'N/A'
-            
+
             # 결과 출력
             print(f"HTML File Name: {html_file_name}\nLong Name: {long_name}\nShort Name: {short_name}\n")
     else:
         print(f"Error fetching XML: Status code {response.status_code}")
 
-## get report content,txt =========================================================
+
+# get report content,txt =========================================================
 def get_filing_content(cik, accession_number, headers):
     # Accession number에서 하이픈('-') 제거
     accession_number_formatted = accession_number.replace('-', '')
-    
+
     # SEC EDGAR에서 문서 URL 생성
     base_url = "https://www.sec.gov/Archives/edgar/data"
     url = f"{base_url}/{cik}/{accession_number_formatted}/{accession_number}.txt"
-    
+
     # 요청 및 응답 받기
     response = requests.get(url, headers=headers)
-    
+
     if response.status_code == 200:
         # BeautifulSoup를 사용하여 HTML 내용 파싱 (예시로 HTML 내용을 그대로 반환)
         soup = BeautifulSoup(response.text, 'html.parser').div
@@ -128,7 +135,7 @@ def get_filing_content(cik, accession_number, headers):
 
 #     # Remove hyphens from the accession number for URL
 #     accession_number_formatted = accession_number.replace('-', '')
-    
+
 #     # Create the main document URL (.htm format)
 #     base_url = "https://www.sec.gov/Archives/edgar/data"
 #     url = f"{base_url}/{cik}/{accession_number_formatted}/R25.htm"
@@ -234,7 +241,7 @@ def revise_table(html_source):
     df = pandas.DataFrame(tr_list)
     print(df)
 
-    
+
 # get report content_other type =========================================================
 def get_filing_content_htm(cik, accession_number, headers):
     # Chrome 드라이버 초기화
@@ -242,12 +249,12 @@ def get_filing_content_htm(cik, accession_number, headers):
 
     # Accession number에서 하이픈('-') 제거
     accession_number_formatted = accession_number.replace('-', '')
-    
+
     # SEC EDGAR에서 메인 문서 URL 생성 (.htm 형식)
     base_url = "https://www.sec.gov/Archives/edgar/data"
-    url = f"{base_url}/{cik}/{accession_number_formatted}/R25.htm" 
+    url = f"{base_url}/{cik}/{accession_number_formatted}/R25.htm"
     # url = f"{base_url}/{cik}/{accession_number_formatted}/{accession_number}-index-headers.html"
-    
+
     # Selenium을 사용하여 웹 페이지 열기
     driver.get(url)
 
@@ -256,7 +263,7 @@ def get_filing_content_htm(cik, accession_number, headers):
 
     # 페이지의 소스 코드 가져오기
     html_source = driver.page_source
-    
+
     # BeautifulSoup 객체 생성
     soup = BeautifulSoup(html_source, 'html.parser')
 
@@ -276,15 +283,11 @@ def get_filing_content_htm(cik, accession_number, headers):
 
     # revise_table(html_source)
 
-    
-
     # df=pd.DataFrame(table[1:], columns=table[0])
 
     # 데이터를 pandas DataFrame으로 변환
-    
 
     # DataFrame 출력
-    
 
     # table = make2d(data)
     # print("table: ", table)
@@ -318,7 +321,7 @@ def get_filing_content_htm(cik, accession_number, headers):
     # table = parser.make2d(data)
     # df = pd.DataFrame(data= table[1:], columns= table[0])
     # print(df)
-    
+
     # # html -> txt
     # # soup = soup.get_text(separator='\n', strip=True)
 
