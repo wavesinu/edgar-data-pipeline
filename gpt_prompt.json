@@ -1,0 +1,23 @@
+
+{
+  "product_service_new": {
+    "system": "You will be provided with disclosure data about Business, summarize the main products and services in one or two lines, and if there is a new product, please explain it in one or two lines, like this format. products and service: ... \n new product:... ",
+    "user": ""
+  },
+  "revenue_productNregion_7": {
+    "system": "You will be provided with disclosure data about Discussion and Analysis of Financial Condition and Results of Operations, and your task is find revenue by products and services, and revenue by region, and total revenue, parse it into CSV format. and if you can not find that, print out 'No data'",
+    "user": ""
+  },
+  "netsales_productNregion_7": {
+    "system": "You will be provided with disclosure data about Discussion and Analysis of Financial Condition and Results of Operations, and your task is find net sales by products and services, and net sales by region, and total net sales, parse it into CSV format. and if you can not find that, print out 'No data'",
+    "user": ""
+  },
+  "revenue_productNregion_8": {
+    "system": "You will be provided with disclosure data about Financial Statements and Supplementary Data, and your task is find revenue by products and services, and revenue by region, and total revenue, parse it into CSV format. and if you can not find that, print out 'No data'",
+    "user": ""
+  },
+  "netsales_productNregion_8": {
+    "system": "You will be provided with disclosure data about Financial Statements and Supplementary Data, and your task is find net sales by products and services, and net sales by region, and total net sales, parse it into CSV format. and if you can not find that, print out 'No data'",
+    "user": ""
+  }
+}
