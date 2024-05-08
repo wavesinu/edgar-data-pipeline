@@ -290,3 +290,4 @@ pyrightconfig.json
 .DS_Store
 *.iml
 *.xml
+*.exe
