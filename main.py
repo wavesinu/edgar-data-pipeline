@@ -4,11 +4,29 @@ import os
 from connect_postgresql import *
 from connect_gpt import *
 
+# gpt 인스턴스 생성
+gpt = GPT()
+
 # db 인스턴스 생성
 database = Databases()
 
-# gpt 인스턴스 생성
-gpt = GPT()
+first_query = """
+CREATE TABLE IF NOT EXISTS table1 (
+    company_cik INT NOT NULL,
+    year INT NOT NULL,
+    name varchar(30),
+    item_1 TEXT,
+    item_2 TEXT,
+    item_3 TEXT,
+    item_5 TEXT,
+    item_7 TEXT,
+    item_7a TEXT,
+    item_8 TEXT
+)
+"""
+
+database.insertDB(first_query)
+
 
 # extract 폴더 불러와 안에 있는 파일 모두 읽기
 dir_path = 'edgar-crawler-main/datasets/EXTRACTED_FILINGS'
@@ -17,6 +35,15 @@ file_list = os.listdir(dir_path)
 # gpt 프롬프트 json 불러오기
 with open('gpt_prompt.json', "r") as file:
     prompt_json = json.load(file)
+
+# 프롬프트 리스트로 만들기
+prompt_list = [prompt_json['item_1']['system'],
+               prompt_json['item_2']['system'],
+               prompt_json['item_3']['system'],
+               prompt_json['item_5']['system'],
+               prompt_json['item_7']['system'],
+               prompt_json['item_7A']['system'],
+               prompt_json['item_8']['system']]
 
 # 데이터 추출
 
@@ -32,7 +59,7 @@ def extract_data():
             year = int(file[index-4:index])
             cik = int(file[index2+1:index-9])
 
-            query = f"select year from table1 where company_cik={cik}"
+            query = f"select * from table1 where company_cik={cik} and year = {year}"
             check = database.readDB(query)
             if (len(check) > 0):
                 print(f'{cik},{year}: 이미 존재하는 데이터\n')
@@ -42,53 +69,35 @@ def extract_data():
                 with open(path, "r", encoding='utf-8') as f:
                     data = json.load(f)
 
+                name = data['company'].replace("'", "''")
+
                 item1 = stopwords_d(data["item_1"])
+                item2 = stopwords_d(data['item_2'])
+                item3 = stopwords_d(data['item_3'])
+                item5 = stopwords_d(data['item_5'])
+                item7A = stopwords_d(data['item_7A'])
                 item7 = stopwords_d(data["item_7"])
                 item8 = stopwords_d(data["item_8"])
+                items = [item1, item2, item3, item5, item7, item7A, item8]
                 print(
-                    f'{cik}, {year}, item1의 토큰 개수: {item1[1]}, item7의 토큰 개수: {item7[1]}, item8의 토큰 개수: {item8[1]}')
-
-                if (item1[1] > 13000):
-                    if (item7[1] > 13000):
-                        if (item8[1] > 13000):
-                            print("토큰 초과: 1, 7, 8\n")
-                        else:
-                            print("토큰 초과: 1, 7\n")
+                    f'{cik}, {year}, 토큰 개수: 1: {item1[1]}, 2: {item2[1]}, 3: {item3[1]}, 5: {item5[1]}, 7: {item7[1]}, 7A: {item7A[1]}, 8: {item8[1]}')
+                answer = gpt.gpt_query(prompt_list, items)
+                result = []
+                for item in answer:
+                    # json으로 변환할 수 있는 문자열 형태로 만든다.
+                    if (item != 'No Data'):
+                        first_processed = item.replace("json", "")
+                        second_processed = first_processed.translate(
+                            {ord(letter): None for letter in '\n`'})
+                        final_processed = second_processed.replace("'", "''")
+                        result.append(final_processed)
                     else:
-                        if (item8[1] > 13000):
-                            print("토큰 초과: 1, 8\n")
-                        else:
-                            print("토큰 초과: 1\n")
-                else:
-                    if (item7[1] > 13000):
-                        if (item8[1] > 13000):
-                            print("토큰 초과: 7, 8\n")
-                        else:
-                            print("토큰 초과: 7\n")
-                    else:
-                        if (item8[1] > 13000):
-                            print("토큰 초과: 8\n")
-                        else:
-                            get_re(cik, year, item1, item7, item8)
+                        result.append(item)
 
-
-def get_re(cik, year, item1, item7, item8):
-    product_service_new = gpt.gpt_query_1(
-        content=prompt_json['product_service_new']['system'], item=item1[0])
-    revenue_productNregion = gpt.gpt_query_7(
-        content7=prompt_json["revenue_productNregion_7"]["system"], content8=prompt_json["revenue_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
-    netsales_productNregion = gpt.gpt_query_7(
-        content7=prompt_json["netsales_productNregion_7"]["system"], content8=prompt_json["netsales_productNregion_8"]["system"], item7=item7[0], item8=item8[0])
-    p1 = product_service_new.replace("'", "''")
-    p2 = revenue_productNregion.replace("'", "''")
-    p3 = netsales_productNregion.replace("'", "''")
-
-    query = f"INSERT INTO table1 (company_cik, year, product_service_new, revenue_productNregion, netsales_productNregion) VALUES({cik}, {year}, '{p1}', '{p2}', '{p3}')"
-    database.insertDB(query)
+                query = f"insert into table1 (company_cik, year, name, item_1, item_2, item_3, item_5, item_7, item_7a, item_8) values({cik}, {year}, '{name}', '{result[0]}','{result[1]}','{result[2]}','{result[3]}','{result[4]}','{result[5]}','{result[6]}')"
+                database.insertDB(query)
 
 
 extract_data()
 
-del database
-
-# 작은 질문 단위로 나눠서 질문하는 것이 정확도가 더 높음.(revenue라면 지역별, 제품별을 나눠서 질문하는 것이 정확도가 높음.)
+# item 중 1A, 8이 토큰 초과하는 경우가 많다. 때문에 1A와 8은 반으로 나눠서 진행해야 한다.

@@ -1,23 +1,24 @@
 
 {
-  "product_service_new": {
-    "system": "You will be provided with disclosure data about Business, summarize the main products and services in one or two lines, and if there is a new product, please explain it in one or two lines, like this format. products and service: ... \n new product:... ",
-    "user": ""
+  "item_1": {
+    "system": "You will be provided disclosure data, in this data, Summarize main products and service in 1~2 line and convert to JSON data in this format, {“products”:“”, “service”:“”}, and if there is a new product, summarize in this format, {“products”:“”, “service”:“”, “new_product”: “”}"
   },
-  "revenue_productNregion_7": {
-    "system": "You will be provided with disclosure data about Discussion and Analysis of Financial Condition and Results of Operations, and your task is find revenue by products and services, and revenue by region, and total revenue, parse it into CSV format. and if you can not find that, print out 'No data'",
-    "user": ""
+  "item_2": {
+    "system": "In provided data, summarize about company’s headquater, facilities in 1~2 lines and convert to JSON data in this format, {“headquater”:“”, “facility”:“”}"
   },
-  "netsales_productNregion_7": {
-    "system": "You will be provided with disclosure data about Discussion and Analysis of Financial Condition and Results of Operations, and your task is find net sales by products and services, and net sales by region, and total net sales, parse it into CSV format. and if you can not find that, print out 'No data'",
-    "user": ""
+  "item_3": {
+    "system": "You will be provided the data that contains legal proceedings, summarize by topic in one or two sentences, and convert to JSON data in this format, {“topics”: [{“topic_title1”: “topic_content1”}, {“topic_title2”: “topic_content2”}, {“topic_title3”: “topic_content3”}]}"
   },
-  "revenue_productNregion_8": {
-    "system": "You will be provided with disclosure data about Financial Statements and Supplementary Data, and your task is find revenue by products and services, and revenue by region, and total revenue, parse it into CSV format. and if you can not find that, print out 'No data'",
-    "user": ""
+  "item_5": {
+    "system": "In provided data, summarize data in 2~3 lines and convert to JSON data in this format, {“summary”: “”}"
   },
-  "netsales_productNregion_8": {
-    "system": "You will be provided with disclosure data about Financial Statements and Supplementary Data, and your task is find net sales by products and services, and net sales by region, and total net sales, parse it into CSV format. and if you can not find that, print out 'No data'",
-    "user": ""
+  "item_7": {
+    "system": "In provided data, summarize by topic about 3 lines, and convert to JSON data in this format, {“topics”: [{“topic_title1”: “topic_content1”}, {“topic_title2”: “topic_content2”}, {“topic_title3”: “topic_content3”}]}"
+  },
+  "item_7A": {
+    "system": "In provided data, find Interest Rate Risk and Foreign Exchange(currency) Risk, and summarize each text in 3 lines, and convert to JSON data in this format, {“interest_rate_risk”: “”, “Foreign_Exchange_Risk”: “”}"
+  },
+  "item_8": {
+    "system": "In provided data, find about net sales(revenue) by products(merchandise), convert to JSON data in this format, {“net_sales_products”: {“product_name1”: {“year1”: “value1”, “year2”: “value2”, “year3”: “value3”}, “product_name2”: {“year1”: “value1”, “year2”: “value2”, “year3”: “value3”}, “product_name3”: {“year1”: “value1”, “year2”: “value2”, “year3”: “value3”}, ...}}, and there is no data, just print out 'No Data'"
   }
 }
